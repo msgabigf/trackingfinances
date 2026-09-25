@@ -1,0 +1,4 @@
+# Nunca versionar dados ou backups do app
+*.json
+*.csv
+backup*
