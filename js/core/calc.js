@@ -46,7 +46,8 @@ function latestFor(recs, mes) {
   let first = null;
   for (const r of recs) {
     if (!first || r.mes < first.mes) first = r;
-    if (r.mes <= mes && (!best || r.mes > best.mes)) best = r;
+    // same month: the most recently edited wins
+    if (r.mes <= mes && (!best || r.mes > best.mes || (r.mes === best.mes && (r.editadoEm || '') > (best.editadoEm || '')))) best = r;
   }
   return best || first;
 }

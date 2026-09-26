@@ -1,0 +1,18 @@
+{
+  "name": "Gabi & Yuri",
+  "short_name": "Gabi & Yuri",
+  "description": "Planejamento financeiro da Gabi e do Yuri.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "id": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4F2EE",
+  "theme_color": "#F4F2EE",
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

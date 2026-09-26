@@ -1,4 +1,7 @@
-# Nunca versionar dados ou backups do app
-*.json
+# Nunca versionar dados, backups ou segredos do app
+gabi-e-yuri-backup-*.json
+gabi-e-yuri-*.csv
+*backup*.json
 *.csv
-backup*
+.env
+node_modules/
