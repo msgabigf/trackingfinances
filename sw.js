@@ -1,6 +1,6 @@
 // Offline: the whole app is cached on install and served from the cache.
 // Bump VERSION on every deploy so both phones pick up the new files.
-const VERSION = 'gy-v1.0.1';
+const VERSION = 'gy-v1.0.2';
 const FILES = [
   './',
   'index.html',
