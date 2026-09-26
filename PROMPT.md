@@ -1,4 +1,4 @@
-# Prompt do app (versão 9)
+# Prompt do app (versão 10)
 
 Preencha o que está entre [colchetes] antes de usar. Cole este texto nas instruções do projeto no Claude, para que toda conversa nova já comece com ele.
 
@@ -67,6 +67,7 @@ ENTRY FIELDS
 - Categoria (for the fixed and gasto types; see CATEGORIES)
 - Meta (only for aportes)
 - Quem pagou (joint types only: Gabi or Yuri)
+- Como pagou (optional, remembered): Pix, Débito, Crédito, Dinheiro, each with a nickname we create, for example "Crédito Gabi" or "Pix Yuri". Never card or account numbers.
 - Observação (optional, max 140 characters)
 Entries can be edited and deleted. Deleting moves to a "Lixeira" kept for 30 days, where it can be restored.
 
@@ -132,15 +133,41 @@ METAS (optional goals)
 - A meta has: name, target amount, optional deadline, and owner (conjunta, or individual and private).
 - Progress bar with saved so far, what is left and, if there is a deadline, how much per month is needed. A planned monthly contribution to a meta is subtracted in the plan like an investment.
 
+CAPTURA E LEMBRETES (never forget, never connect the bank)
+We will never connect bank apps or bank accounts. Everything is entered by us or sent by the iPhone itself.
+
+Pendentes (quick capture):
+- On quick-add, "Salvar rápido" saves with only Valor (and optional short text). It goes to "Pendentes" to be classified later.
+- Pendentes always live first in the person's individual sheet and phone, so private purchases never touch the joint sheet. When classified as a joint type, the item is moved to the joint sheet (created there, tombstoned in the individual sheet).
+- Início shows a badge "3 pendentes" and one tap opens a fast classify screen (one card per item: tipo, categoria, quem pagou, done).
+
+iPhone Shortcuts (each person on their own phone, step-by-step guide in the README in Portuguese, like docs/atalho-saude.md in the routine tracker):
+- "Anotar gasto": asks "Quanto?" and "O quê?" and sends it as a Pendente. Can be triggered by Siri ("E aí Siri, anotar gasto"), Back Tap (Toque Duplo nas costas do iPhone) or the Action Button.
+- Apple Pay: a personal automation with the "Transação" trigger (Wallet) that sends amount and merchant name as a Pendente when we pay by tapping the iPhone or Watch. Send only amount, merchant and date. Never the card name or number.
+- Shortcuts post directly to the person's individual Apps Script with its secret code, using a dedicated "capturar" action that only accepts valor, texto, data and origem and can only create Pendentes. The app pulls them on the next sync. Explain in the guide that shortcuts need internet, while the app itself works offline.
+
+Reminders:
+- The README explains how to create a recurring reminder in the iPhone Lembretes app (for example 21h: "Lançou tudo hoje?").
+- Inside the app, Início shows a gentle notice when the person has not added anything for 3 days, when there are Pendentes older than 2 days, and when the weekly Conferir is due.
+
+CONFERIR (weekly check against the bank, without connecting it)
+- Once a week, each of us opens the bank app just to look at the card bill or statement, then in our app picks a "Como pagou" (for example "Crédito Gabi") and a period, and types the total the bank shows.
+- The app compares it with the sum of entries with that "Como pagou" in that period and shows the difference: "Faltam R$ 87,40 no Crédito Gabi" or "Tudo certo". From there one tap opens quick-add pre-filled with that Como pagou.
+- Keep a history of checks (date, Como pagou, bank total, app total, difference). Checks of individual payment methods stay in the individual sheet.
+
+LATER (phase 2, do not build now)
+- Import a card bill or statement file (CSV or OFX) downloaded by us from the bank app: suggest categories, skip what is already entered, and let us confirm each line. No bank connection, ever.
+
 SCREENS
 1. Início: greeting ("Oi, Gabi!"), "Ainda dá pra gastar este mês" card, next meta card, shortcuts, and "Gastos do mês" by category. Quick-add opens from the "+" button on every screen.
 2. Casa (joint): Rendas base, split %, Guardado x Extras, joint pot, fixed costs, Livre conjunto, category budgets with progress bars that change color over 100%, one bar chart per category, joint metas.
 3. Meu mês (private): my Renda base and freelas, my house contribution, my fixed costs, Meu livre, my category budgets and chart, my metas.
-4. Lista with filters by month, tipo, categoria and who paid (joint entries plus only my own individual ones).
+4. Lista with filters by month, tipo, categoria, como pagou and who paid (joint entries plus only my own individual ones).
 5. Contas fixas: checklist of fixed costs (joint and my own) with expected amount and due day. Each month starts unticked but past months' ticks are kept. Ticking asks for the real amount, creates the entry and triggers the recalculation.
 6. Quem deve a quem: balance from joint items (each owes their share, whoever paid gets credit), "Registrar acerto / empréstimo", and history.
-7. Plano: edit Valor da casa, percentages and expected fixed costs; "Planejado x Real" and suggestions.
-8. Ajustes: names, sheet connections (URL + secret code for Casa and for my individual sheet, "Testar conexão"), sync status, "Baixar backup" (JSON for restoring, CSV with ";" separator and "," decimal), "Restaurar backup" with a preview and confirmation, "Esconder valores" default.
+7. Pendentes and Conferir (see CAPTURA E LEMBRETES and CONFERIR).
+8. Plano: edit Valor da casa, percentages and expected fixed costs; "Planejado x Real" and suggestions.
+9. Ajustes: names, "Como pagou" nicknames, sheet connections (URL + secret code for Casa and for my individual sheet, "Testar conexão"), sync status, "Baixar backup" (JSON for restoring, CSV with ";" separator and "," decimal), "Restaurar backup" with a preview and confirmation, "Esconder valores" default.
 
 SAMPLE DATA
 - We are starting with a fictional scenario. Include a "Carregar exemplo" button that fills 3 realistic sample months with freelas in some months (so the Guardar/Curtir split and Guardado x Extras show up), fixed costs, percentages and entries, marked as sample, and an "Apagar exemplo" button that removes every sample item and nothing else.
@@ -149,7 +176,7 @@ DATA RULES
 - Store money as integer centavos (R$ 12,50 = 1250) and percentages as integer basis points (12,5% = 1250). Never floating point. Round only when displaying, and make rounded budgets add up exactly to the total.
 - Store dates as "aaaa-mm-dd" text in Brazil time; timestamps in ISO format.
 - Each entry stores: id, valor, data, tipo, categoriaId, metaId, pagoPor (joint only), observação, criadoPor (Gabi or Yuri), criadoEm, editadoEm, excluídoEm, exemplo (true/false).
-- Also stored: income entries (base or freela) and Renda base per person per month, freela rule, closed months, monthly plans (Valor da casa and percentages), fixed costs with expected amounts, monthly checklist ticks, categories, metas, acertos, settings, and a schemaVersion.
+- Also stored: pendentes, Como pagou nicknames, conferir history, income entries (base or freela) and Renda base per person per month, freela rule, closed months, monthly plans (Valor da casa and percentages), fixed costs with expected amounts, monthly checklist ticks, categories, metas, acertos, settings, and a schemaVersion.
 - Keep the structure stable, both in IndexedDB and in the sheet columns. Before ANY change that affects saved data or the Apps Script: explain what changes, ask me first, and remind us to download a backup before you proceed.
 
 SECURITY
@@ -180,7 +207,7 @@ BUILD RULES
 - Mobile first, tap targets at least 44px, clean and calm design, works in light and dark mode.
 - Work on a branch, merge to main, and GitHub Pages publishes. App link: [https://msgabigf.github.io/trackingfinances/ depois de ativar o Pages].
 - Bump the service worker cache version on every release so both phones get the update, and show "Nova versão disponível, toque para atualizar".
-- README in Portuguese with the setup step by step: GitHub Pages, installing on each iPhone, creating the three sheets and scripts, and updating a script after changes (Deploy → Gerenciar implantações → Nova versão).
+- README in Portuguese with the setup step by step: GitHub Pages, installing on each iPhone, creating the three sheets and scripts, the iPhone Shortcuts (Anotar gasto, Apple Pay automation), the daily reminder, and updating a script after changes (Deploy → Gerenciar implantações → Nova versão).
 - After each change, tell me in two or three sentences what changed and what we should test.
 - After any change to saving, sync, privacy or the money math: write and run automated tests for the calculations (split, contributions, plan, balance, rounding) and for the merge logic, then give us a short test for two phones (Gabi adds a joint item offline, it syncs when online and Yuri sees it after refreshing; Gabi adds an individual item, it appears only in Gabi's sheet and never on Yuri's phone; a fixed cost change recalculates the budgets on both; balance matches on both).
 
