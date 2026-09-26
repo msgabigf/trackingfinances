@@ -1,4 +1,4 @@
-# Prompt do app (versão 10)
+# Prompt do app (versão 11)
 
 Preencha o que está entre [colchetes] antes de usar. Cole este texto nas instruções do projeto no Claude, para que toda conversa nova já comece com ele.
 
@@ -91,18 +91,36 @@ Joint plan (visible to both), in this order of priority:
 1. "Valor da casa": one amount in R$ that the house needs per month (for example R$ 7.000). Each person's contribution = Valor da casa × their split %. If the Valor da casa is more than [70]% of the two bases combined, or does not cover the expected fixed costs, show a warning in the plan editor.
 2. Contas fixas conjuntas come first and are always fully covered.
 3. Then the planned joint investment and joint meta contributions.
-4. What is left is the "Livre conjunto", divided by percentages across the joint variable categories (for example Mercado 40%, Delivery 15%, Lazer 20%, Casa 10%, Reserva 15%). The app shows each category's budget in R$, spent so far and what is left.
+4. What is left is the "Livre conjunto", divided by percentages across the joint variable categories (for example Mercado 35%, Delivery 12%, Lazer 18%, Casa 10%, Imprevistos 15%, Reserva 10%). The app shows each category's budget in R$, spent so far and what is left.
 
 Individual plan (private, one per person):
 1. Own Renda base minus own contribution to the house.
 2. Minus own fixed costs, own investments and own meta contributions. The result is "Meu livre".
-3. Meu livre is divided by that person's own percentages across their individual variable categories (for example Salão, Roupas, Lazer pessoal, Reserva).
+3. Meu livre is divided by that person's own percentages across their individual variable categories (for example Salão, Roupas, Lazer pessoal, Imprevistos, Reserva).
 4. The "curtir" part of freelas (see FREELAS) is added on top of Meu livre as "Extra do freela".
 
 FREELAS (make savings grow faster than silly spending)
-- Rule set by us: of every freela, [70]% goes to "Guardar" and [30]% to "Curtir". Default destination for Guardar: [a meta conjunta ou investimento conjunto / o investimento individual de quem recebeu], changeable per freela.
-- When a freela is added, the app shows "Separar agora?" with the split already filled in. One tap creates the savings entry (aporte or investimento) and adds the Curtir part to that person's Extra do freela.
+- Rule set by us (starting values, editable any time in Plano): of every freela, 70% goes to "Guardar" and 30% to "Curtir".
+- The Guardar part is split 50% to the individual investment of the person who received the freela and 50% to joint savings (the joint meta or joint investment we choose as default). Both percentages are editable in Plano and can be changed per freela.
+- When a freela is added, the app shows "Separar agora?" with everything already filled in (example: freela R$ 1.000 → R$ 350 meu investimento, R$ 350 conjunto, R$ 300 curtir). One tap creates the savings entries and adds the Curtir part to that person's Extra do freela.
+- The joint part is a voluntary contribution: it never creates a debt between us. On the individual side only the amounts go to the joint sheet, never the freela details.
 - The Guardar part never becomes spendable budget.
+
+PARCELADOS (installments commit future months)
+- Quick-add has "Parcelado?" for credit purchases: total value (or value per installment) and number of installments (2 to 24). The app shows "Isso compromete R$ 300 por mês até mar/2027" before saving.
+- A parceled purchase is one record with its installments. Each installment counts in the month its bill is paid. Each "Crédito" nickname can have a closing day and due day; a purchase after the closing day starts in the following bill. Without them, the first installment falls in the next month.
+- Future months already show the installments as "Já comprometido" in the plan, subtracted before the Livre, like fixed costs. Plano shows a "Próximos 6 meses" view with how much of each month is already committed (joint and my own).
+- Joint installments are split with the split of the month each installment falls in.
+- Editing or cancelling the purchase updates or removes all future installments (paid ones stay). "Quitar antecipado" moves the remaining installments to the current month.
+- Warn when committed installments pass [20]% of the Livre of any upcoming month.
+- Centavos: the first installment absorbs rounding so the installments add up exactly to the total.
+
+IMPREVISTOS (emergencies like farmácia, conserto, veterinário)
+- Categories can be marked "imprevisto" (for example Farmácia, Saúde urgente, Conserto, Veterinário). Every plan (joint and individual) has an "Imprevistos" budget.
+- An imprevisto always counts. It first uses the Imprevistos budget. If it goes over, the app asks right after saving "De onde tirar R$ X?" with a ready suggestion: take from the categories marked "extra" first (Delivery, Lazer, Restaurantes...), proportionally to what is still left in each, never from Mercado or fixed costs. Then from Reserva. We can accept, adjust the amounts, or choose another category.
+- Each move is recorded as a "Remanejamento" (from, to, amount, month, reason) and shown on the category: "Lazer: R$ 400 − R$ 120 remanejado para Farmácia". Remanejamentos only affect that month.
+- If the extras and Reserva are not enough, show clearly how much the month will close negative, so we can decide together.
+- Imprevistos count as spending, not as extras, in Guardado x Extras. Planejado x Real suggests a bigger Imprevistos budget if it keeps running out.
 
 GUARDADO X EXTRAS (the main health indicator)
 - Categories can be marked "extra" (non-essential), for example Delivery, Restaurantes, Lazer, Compras por impulso, Roupas. Essentials like Mercado, contas and Saúde are not extras.
@@ -125,7 +143,7 @@ Plan settings:
 - Renda base, Valor da casa, expected fixed costs, percentages and the freela rule are stored per month. Changing them applies from the current month forward; past months keep their plan.
 
 CATEGORIES
-- Joint fixed: Condomínio, Aluguel, Luz, Gás, Água, Internet, Outros fixos. Joint variable: Mercado, Delivery, Restaurantes, Lazer, Transporte, Casa, Reserva.
+- Joint fixed: Condomínio, Aluguel, Luz, Gás, Água, Internet, Outros fixos. Joint variable: Mercado, Delivery, Restaurantes, Lazer, Transporte, Casa, Farmácia (imprevisto), Imprevistos, Reserva.
 - Each person manages their own individual categories (for example Academia and Celular as fixed; Salão, Roupas, Lazer pessoal, Reserva as variable).
 - Every category has a stable internal id. Renaming never breaks old entries. A category with entries can be archived but not deleted.
 
@@ -170,13 +188,13 @@ SCREENS
 9. Ajustes: names, "Como pagou" nicknames, sheet connections (URL + secret code for Casa and for my individual sheet, "Testar conexão"), sync status, "Baixar backup" (JSON for restoring, CSV with ";" separator and "," decimal), "Restaurar backup" with a preview and confirmation, "Esconder valores" default.
 
 SAMPLE DATA
-- We are starting with a fictional scenario. Include a "Carregar exemplo" button that fills 3 realistic sample months with freelas in some months (so the Guardar/Curtir split and Guardado x Extras show up), fixed costs, percentages and entries, marked as sample, and an "Apagar exemplo" button that removes every sample item and nothing else.
+- We are starting with a fictional scenario. Include a "Carregar exemplo" button that fills 3 realistic sample months with freelas in some months (so the Guardar/Curtir split and Guardado x Extras show up), a parceled purchase running across the months, one pharmacy emergency with a remanejamento,, fixed costs, percentages and entries, marked as sample, and an "Apagar exemplo" button that removes every sample item and nothing else.
 
 DATA RULES
 - Store money as integer centavos (R$ 12,50 = 1250) and percentages as integer basis points (12,5% = 1250). Never floating point. Round only when displaying, and make rounded budgets add up exactly to the total.
 - Store dates as "aaaa-mm-dd" text in Brazil time; timestamps in ISO format.
 - Each entry stores: id, valor, data, tipo, categoriaId, metaId, pagoPor (joint only), observação, criadoPor (Gabi or Yuri), criadoEm, editadoEm, excluídoEm, exemplo (true/false).
-- Also stored: pendentes, Como pagou nicknames, conferir history, income entries (base or freela) and Renda base per person per month, freela rule, closed months, monthly plans (Valor da casa and percentages), fixed costs with expected amounts, monthly checklist ticks, categories, metas, acertos, settings, and a schemaVersion.
+- Also stored: parceled purchases and their installments, remanejamentos, pendentes, Como pagou nicknames, conferir history, income entries (base or freela) and Renda base per person per month, freela rule, closed months, monthly plans (Valor da casa and percentages), fixed costs with expected amounts, monthly checklist ticks, categories, metas, acertos, settings, and a schemaVersion.
 - Keep the structure stable, both in IndexedDB and in the sheet columns. Before ANY change that affects saved data or the Apps Script: explain what changes, ask me first, and remind us to download a backup before you proceed.
 
 SECURITY
@@ -209,7 +227,7 @@ BUILD RULES
 - Bump the service worker cache version on every release so both phones get the update, and show "Nova versão disponível, toque para atualizar".
 - README in Portuguese with the setup step by step: GitHub Pages, installing on each iPhone, creating the three sheets and scripts, the iPhone Shortcuts (Anotar gasto, Apple Pay automation), the daily reminder, and updating a script after changes (Deploy → Gerenciar implantações → Nova versão).
 - After each change, tell me in two or three sentences what changed and what we should test.
-- After any change to saving, sync, privacy or the money math: write and run automated tests for the calculations (split, contributions, plan, balance, rounding) and for the merge logic, then give us a short test for two phones (Gabi adds a joint item offline, it syncs when online and Yuri sees it after refreshing; Gabi adds an individual item, it appears only in Gabi's sheet and never on Yuri's phone; a fixed cost change recalculates the budgets on both; balance matches on both).
+- After any change to saving, sync, privacy or the money math: write and run automated tests for the calculations (split, contributions, plan, balance, rounding, installments, remanejamentos, freela split) and for the merge logic, then give us a short test for two phones (Gabi adds a joint item offline, it syncs when online and Yuri sees it after refreshing; Gabi adds an individual item, it appears only in Gabi's sheet and never on Yuri's phone; a fixed cost change recalculates the budgets on both; balance matches on both).
 
 STYLE
 In chat, reply in the language I write in. Keep explanations short. No em dashes.
