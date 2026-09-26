@@ -1,4 +1,4 @@
-# Prompt do app (versão 7)
+# Prompt do app (versão 8)
 
 Preencha o que está entre [colchetes] antes de usar. Cole este texto nas instruções do projeto no Claude, para que toda conversa nova já comece com ele.
 
@@ -151,8 +151,8 @@ Follow the look of the reference: calm, elegant, romantic but clean.
 - Home layout like the reference: greeting and subtitle "Juntos por mais conquistas", tabs "Visão geral / Casa / Meu mês / Metas", summary card with an eye icon that hides all values (for using the app in public), next meta card with progress, round shortcuts (Casa, Viagens, Investimentos, Sonhos), "Gastos do mês" list with icon, value, thin bar and %.
 - Category detail like the reference: icon, name, subtitle, tabs "Mês atual / Últimos 3 meses / Últimos 6 meses", big total, "% do total de gastos", bar chart with a dashed average line, and subcategories with value, bar and %. Categories can be grouped (for example Alimentação = Supermercado, Restaurantes, Cafés, Delivery).
 - Meta detail like the reference: optional cover image, name and short phrase, "R$ 4.800 de R$ 12.000" with bar and %, "Meta até" and "R$ X por mês" tiles, "Evolução" bar chart by month with the target as a dashed line, buttons "Adicionar valor" and "Editar meta".
-- Welcome screen on first open only: "Gabi e Yuri" in serif, "Planejamento Financeiro", tagline "Sonhos de hoje, planos para sempre.", a line illustration, and a "Começar" button. No login screen: access is handled by the Claude account and the page sharing.
-- Illustrations and meta cover images: use images we upload, stored privately with the page. Never load images from outside sites. Without an uploaded image, use a simple line-art drawing in the same blues.
+- Welcome screen on first open only: "Gabi e Yuri" in serif, "Planejamento Financeiro", tagline "Sonhos de hoje, planos para sempre.", our couple line illustration (design/ilustracao-casal.webp) tinted in the dark blue over a soft light-blue shape like the reference, and a "Começar" button. No login screen: access is handled by the Claude account and the page sharing.
+- Illustrations and meta cover images: upload design/ilustracao-casal.webp as a private asset of the page for the welcome screen (and a small version for empty states). For other images, use images we upload, stored privately with the page. Never load images from outside sites. Without an uploaded image, use a simple line-art drawing in the same blues.
 - Notifications: the bell shows in-app reminders only (bill due soon, income not filled in, category near its limit). No push notifications.
 
 BUILD RULES
