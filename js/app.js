@@ -11,7 +11,7 @@ import { wireCharts } from './ui/chart.js';
 import { toast, confirmSheet, closeSheet, sheetOpen } from './ui/overlay.js';
 import { requestPersistence } from './store.js';
 
-const VERSION = '1.0.2';
+const VERSION = '1.0.3';
 const view = document.getElementById('view');
 const nav = document.getElementById('nav');
 

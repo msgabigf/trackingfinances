@@ -1,6 +1,6 @@
 // Offline: the whole app is cached on install and served from the cache.
 // Bump VERSION on every deploy so both phones pick up the new files.
-const VERSION = 'gy-v1.0.2';
+const VERSION = 'gy-v1.0.3';
 const FILES = [
   './',
   'index.html',
@@ -14,8 +14,8 @@ const FILES = [
   'assets/art/casal.png', 'assets/art/casal-mini.png',
   'assets/art/sketch/casa.png', 'assets/art/sketch/aviao.png', 'assets/art/sketch/mapa.png', 'assets/art/sketch/cartao.png',
   'assets/art/sketch/lampada.png', 'assets/art/sketch/hamburguer.png', 'assets/art/sketch/grafico.png',
-  'assets/icons/apple-touch-icon.png', 'assets/icons/favicon.png',
-  'assets/icons/icon-192.png', 'assets/icons/icon-512.png', 'assets/icons/icon-maskable-512.png',
+  'assets/icons/apple-touch-icon-v2.png', 'assets/icons/favicon-v2.png',
+  'assets/icons/icon-192-v2.png', 'assets/icons/icon-512-v2.png', 'assets/icons/icon-maskable-512-v2.png',
 ];
 
 self.addEventListener('install', (e) => {
