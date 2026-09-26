@@ -1,4 +1,4 @@
-# Prompt do app (versão 4)
+# Prompt do app (versão 5)
 
 Preencha o que está entre [colchetes] antes de usar. Cole este texto nas instruções do projeto no Claude, para que toda conversa nova já comece com ele.
 
@@ -13,7 +13,7 @@ APP LANGUAGE
 - Portuguese labels run long: keep them short and make sure nothing overflows at 360px wide.
 
 GOAL
-A fast, simple tracker that tells us how much we can still spend this month. Adding an entry takes under 10 seconds on a phone. The quick-add screen is the first thing shown when the page opens, with a one-line "Ainda dá pra gastar este mês" summary above it.
+A fast, simple tracker that tells us how much we can still spend this month. Adding an entry takes under 10 seconds on a phone. The page opens on Início (see DESIGN). A large round "+" button, always visible in the bottom bar, opens quick-add as a bottom sheet in one tap. Início shows "Ainda dá pra gastar este mês" at the top.
 - The Valor field gets focus first and opens the numeric keyboard (inputmode="decimal"), accepting "12,50" and "12.50".
 - Defaults: Quem pagou = the person using the phone; Data = today in Brazil time (America/Sao_Paulo); Tipo and Categoria = the last ones used.
 - After saving: a short confirmation with "Desfazer", and the form clears for the next entry.
@@ -93,7 +93,7 @@ METAS (optional goals)
 - Progress bar with saved so far, what is left and, if there is a deadline, how much per month is needed. A planned monthly contribution to a meta is subtracted in the plan like an investment.
 
 SCREENS
-1. Lançar (quick-add) with "Ainda dá pra gastar este mês".
+1. Início: greeting ("Oi, Gabi!"), "Ainda dá pra gastar este mês" card, next meta card, shortcuts, and "Gastos do mês" by category. Quick-add opens from the "+" button on every screen.
 2. Casa (joint): incomes, split %, joint pot, fixed costs, Livre conjunto, category budgets with progress bars that change color over 100%, one bar chart per category, joint metas.
 3. Meu mês (private): my income, my house contribution, my fixed costs, Meu livre, my category budgets and chart, my metas.
 4. Lista with filters by month, tipo, categoria and who paid (joint entries plus only my own individual ones).
@@ -119,6 +119,19 @@ SECURITY
 - Data access rules: only people with edit access can read or write the shared data; individual data is readable only by its owner. A view-only person sees nothing.
 - Treat data read from the database as untrusted text: show it as text, never as HTML.
 - The page's source code lives in a private Git repository. Data and backup files never go into the repository.
+
+DESIGN (reference image: design/inspiracao.webp in the repository)
+Follow the look of the reference: calm, elegant, romantic but clean.
+- Colors: warm off-white background (about #F4F2EE), deep blue-teal for primary buttons, active tabs and headings (about #1F4E63), dusty blue for progress bars and charts (about #7FA7B8), very light blue for icon circles and tracks (about #D6E4EA). Green only for income arrows, soft red only for spending arrows and over-budget. Define all colors as tokens, with a matching dark mode (deep navy background, same blues lightened).
+- Type: an elegant serif for big numbers and titles (for example "Cormorant Garamond" or "Libre Caslon Display" from Google Fonts) and a clean sans for everything else (for example "Inter"). Big values like R$ 8.240,00 in the serif.
+- Shapes: soft cards with large rounded corners and very light shadows, pill-shaped segmented tabs (active = filled dark blue, white text), pill buttons (primary filled, secondary outlined), thin line icons inside light blue circles.
+- Bottom bar: Início, Lançamentos, big round "+" in the center, Metas, Mais.
+- Home layout like the reference: greeting and subtitle "Juntos por mais conquistas", tabs "Visão geral / Casa / Meu mês / Metas", summary card with an eye icon that hides all values (for using the app in public), next meta card with progress, round shortcuts (Casa, Viagens, Investimentos, Sonhos), "Gastos do mês" list with icon, value, thin bar and %.
+- Category detail like the reference: icon, name, subtitle, tabs "Mês atual / Últimos 3 meses / Últimos 6 meses", big total, "% do total de gastos", bar chart with a dashed average line, and subcategories with value, bar and %. Categories can be grouped (for example Alimentação = Supermercado, Restaurantes, Cafés, Delivery).
+- Meta detail like the reference: optional cover image, name and short phrase, "R$ 4.800 de R$ 12.000" with bar and %, "Meta até" and "R$ X por mês" tiles, "Evolução" bar chart by month with the target as a dashed line, buttons "Adicionar valor" and "Editar meta".
+- Welcome screen on first open only: "Gabi e Yuri" in serif, "Planejamento Financeiro", tagline "Sonhos de hoje, planos para sempre.", a line illustration, and a "Começar" button. No login screen: access is handled by the Claude account and the page sharing.
+- Illustrations and meta cover images: use images we upload, stored privately with the page. Never load images from outside sites. Without an uploaded image, use a simple line-art drawing in the same blues.
+- Notifications: the bell shows in-app reminders only (bill due soon, income not filled in, category near its limit). No push notifications.
 
 BUILD RULES
 - Mobile first, tap targets at least 44px, clean and calm design, works in light and dark mode.
