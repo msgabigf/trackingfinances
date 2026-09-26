@@ -1,4 +1,4 @@
-# Prompt do app (versão 12)
+# Prompt do app (versão 13)
 
 Preencha o que está entre [colchetes] antes de usar. Cole este texto nas instruções do projeto no Claude, para que toda conversa nova já comece com ele.
 
@@ -121,7 +121,9 @@ IMPREVISTOS (always joint: in a relationship, emergencies are shared)
 - The joint plan has an "Imprevistos" budget. An imprevisto always counts and first uses that budget.
 - If it goes over, the app asks right after saving "De onde tirar R$ X?" with a ready suggestion: take from the joint categories marked "extra" first (Delivery, Lazer, Restaurantes...), proportionally to what is still left in each, never from Mercado, fixed costs or Saúde. Then from Reserva. We can accept, adjust the amounts, or choose another category.
 - Each move is recorded as a "Remanejamento" (from, to, amount, month, reason) and shown on the category: "Lazer: R$ 400, R$ 120 remanejado para Farmácia". Remanejamentos only affect that month.
-- If the extras and Reserva are not enough, show clearly how much the month will close negative, so we can decide together.
+- If the joint extras and Reserva are not enough, the rest becomes an "Aporte extra para a casa" from each of us, split by DIVISÃO (example: R$ 500 missing, split 60/40 → Gabi R$ 300, Yuri R$ 200). The app shows it on Casa and asks both to confirm.
+- On each person's private side, the Aporte extra is subtracted from Meu livre that month, and the app suggests where to take it from, using that person's own extra categories first, then their Reserva. Only the amount crosses between the joint and individual sheets, never the individual details.
+- If even that is not enough, show clearly how much the month will close negative, so we can decide together.
 - The Observação is optional: no need to write what the medicine or treatment was.
 - Planejado x Real suggests a bigger Imprevistos budget if it keeps running out.
 
@@ -195,7 +197,7 @@ SCREENS
 9. Ajustes: names, "Como pagou" nicknames, sheet connections (URL + secret code for Casa and for my individual sheet, "Testar conexão"), sync status, "Baixar backup" (JSON for restoring, CSV with ";" separator and "," decimal), "Restaurar backup" with a preview and confirmation, "Esconder valores" default.
 
 SAMPLE DATA
-- We are starting with a fictional scenario. Include a "Carregar exemplo" button that fills 3 realistic sample months with freelas in some months (so the Guardar/Curtir split and Guardado x Extras show up), a parceled purchase running across the months, one pharmacy emergency with a remanejamento,, fixed costs, percentages and entries, marked as sample, and an "Apagar exemplo" button that removes every sample item and nothing else.
+- We are starting with a fictional scenario. Include a "Carregar exemplo" button that fills 3 realistic sample months with freelas in some months (so the Guardar/Curtir split and Guardado x Extras show up), a parceled purchase running across the months, one pharmacy emergency with a remanejamento, one bigger emergency that needs an Aporte extra from both,, fixed costs, percentages and entries, marked as sample, and an "Apagar exemplo" button that removes every sample item and nothing else.
 
 DATA RULES
 - Store money as integer centavos (R$ 12,50 = 1250) and percentages as integer basis points (12,5% = 1250). Never floating point. Round only when displaying, and make rounded budgets add up exactly to the total.
