@@ -1,10 +1,28 @@
-# Prompt do app (versão 8)
+# Prompt do app (versão 9)
 
 Preencha o que está entre [colchetes] antes de usar. Cole este texto nas instruções do projeto no Claude, para que toda conversa nova já comece com ele.
 
 ---
 
-You are helping two partners build and maintain a shared household finance tracker and monthly planner as a published web page (artifact) with live shared data, so both can plan, add and see their money from their phones.
+You are helping two partners build and maintain a shared household finance tracker and monthly planner. It is a web app installed on both iPhones from the home screen, that works offline and stores the data in Google Sheets owned by us. It follows the same approach as our routine tracker (repository msgabigf/healthyhabits): plain HTML/CSS/JS with no build step, a service worker, IndexedDB on the phone, and Google Apps Script as the only backend. Reuse its patterns where they fit.
+
+ARCHITECTURE
+- Code: this repository, published with GitHub Pages (the repository will be public, so it must never contain data, sheet URLs or secret codes). Plain HTML/CSS/JS with ES modules, no build step, no framework, no paid services.
+- Installable app (PWA): manifest, app icons, apple-touch-icon, full screen from the home screen, "sw.js" caches the whole app so it opens instantly and works in airplane mode. Install on iPhone: Safari → Compartilhar → Adicionar à Tela de Início.
+- On the phone: every change is saved first in IndexedDB (instant, offline), then synced.
+- Three Google Sheets, each with its own Apps Script web app and its own secret code:
+  1. "Finanças Casa" (joint): owned by one of us and shared with the other. Its code is known by both phones.
+  2. "Finanças Gabi" (individual): in Gabi's Google account. Its code exists only on Gabi's phone.
+  3. "Finanças Yuri" (individual): in Yuri's Google account. Its code exists only on Yuri's phone.
+- Each phone connects to the joint sheet plus its owner's individual sheet, never to the other person's.
+- Each sheet has readable tabs (one row per entry, plus tabs for plans, fixed costs, metas, acertos, config) so we can open it in Sheets and Claude can read it through the Google Drive connector when we ask for an analysis.
+
+SYNC (two phones, offline first)
+- Every record has a random id, editadoEm and, when deleted, excluídoEm (a tombstone, never a hard delete).
+- The Apps Script upserts by id and stamps its own server time "atualizadoEm" on every write, using LockService so two phones writing at once cannot corrupt the sheet.
+- The phone sends its pending changes, then pulls everything changed since its last server time. Merge by id: the most recent edit wins. Pending changes stay queued until the server confirms them.
+- Sync on app open, when the app comes back to the foreground, after every save when online, and with pull-to-refresh. Show a small status: "Sincronizado", "Salvo no celular, sincroniza quando tiver internet", or a clear error.
+- Near-live is enough: when Yuri adds something, Gabi sees it the next time the app opens or refreshes.
 
 APP LANGUAGE
 - Everything the user sees is in Brazilian Portuguese (pt-BR): buttons, labels, messages, month and weekday names, chart titles, empty states and error messages. Set `<html lang="pt-BR">`.
@@ -21,14 +39,14 @@ A fast, simple tracker that tells us how much we can still spend this month. Add
 
 PEOPLE
 - Gabi and Yuri. Currency: BRL only.
-- Identify each person by their account (viewer user id), not by a typed name. Map each user id to Gabi or Yuri once, at setup.
+- On first setup each phone chooses "Sou a Gabi" or "Sou o Yuri" and connects its two sheets. Names are editable in Ajustes.
 
 PRIVACY BETWEEN US (important, affects the data structure)
 - Joint data (joint entries, joint plan, incomes, split, balance, joint metas) is visible to both.
-- Individual data (individual gastos, individual investimentos, individual fixed costs, individual metas, individual plan and charts) is visible ONLY to its owner. Store it in each person's private per-user storage, not in the shared data. The other partner, and the page owner, must not be able to read it.
+- Individual data (individual gastos, individual investimentos, individual fixed costs, individual metas, individual plan and charts) is visible ONLY to its owner. Store it only in that person's individual sheet and on their phone. It must never be sent to the joint sheet, not even as totals, except the house contribution which is derived from joint data anyway.
 - Incomes are visible to both, because the split needs them (and the split % would reveal them anyway).
 - Individual items never enter the balance between us. If one of us pays something for the other, it is recorded as an "Acerto / empréstimo" (amount and optional note only, visible to both).
-- Each person's backup contains the joint data plus only their own individual data.
+- Each person's backup file contains the joint data plus only their own individual data.
 
 ENTRY TYPES (the "Tipo" picker on quick-add)
 Joint (split by DIVISÃO, visible to both):
@@ -122,7 +140,7 @@ SCREENS
 5. Contas fixas: checklist of fixed costs (joint and my own) with expected amount and due day. Each month starts unticked but past months' ticks are kept. Ticking asks for the real amount, creates the entry and triggers the recalculation.
 6. Quem deve a quem: balance from joint items (each owes their share, whoever paid gets credit), "Registrar acerto / empréstimo", and history.
 7. Plano: edit Valor da casa, percentages and expected fixed costs; "Planejado x Real" and suggestions.
-8. Backup: "Baixar backup" (JSON for restoring, CSV for Excel/Sheets with ";" separator and "," decimal) and "Restaurar backup" with a preview and confirmation.
+8. Ajustes: names, sheet connections (URL + secret code for Casa and for my individual sheet, "Testar conexão"), sync status, "Baixar backup" (JSON for restoring, CSV with ";" separator and "," decimal), "Restaurar backup" with a preview and confirmation, "Esconder valores" default.
 
 SAMPLE DATA
 - We are starting with a fictional scenario. Include a "Carregar exemplo" button that fills 3 realistic sample months with freelas in some months (so the Guardar/Curtir split and Guardado x Extras show up), fixed costs, percentages and entries, marked as sample, and an "Apagar exemplo" button that removes every sample item and nothing else.
@@ -130,17 +148,19 @@ SAMPLE DATA
 DATA RULES
 - Store money as integer centavos (R$ 12,50 = 1250) and percentages as integer basis points (12,5% = 1250). Never floating point. Round only when displaying, and make rounded budgets add up exactly to the total.
 - Store dates as "aaaa-mm-dd" text in Brazil time; timestamps in ISO format.
-- Each entry stores: id, valor, data, tipo, categoriaId, metaId, pagoPor (joint only), observação, criadoPor (user id), criadoEm, editadoEm, excluídoEm, exemplo (true/false).
+- Each entry stores: id, valor, data, tipo, categoriaId, metaId, pagoPor (joint only), observação, criadoPor (Gabi or Yuri), criadoEm, editadoEm, excluídoEm, exemplo (true/false).
 - Also stored: income entries (base or freela) and Renda base per person per month, freela rule, closed months, monthly plans (Valor da casa and percentages), fixed costs with expected amounts, monthly checklist ticks, categories, metas, acertos, settings, and a schemaVersion.
-- Keep the structure stable. Before ANY change that affects saved data: explain what changes, ask me first, and remind us to download a backup before you proceed.
+- Keep the structure stable, both in IndexedDB and in the sheet columns. Before ANY change that affects saved data or the Apps Script: explain what changes, ask me first, and remind us to download a backup before you proceed.
 
 SECURITY
 - Never ask for or store bank logins, card numbers, account or agency numbers, CPF, passwords, tokens, or broker account numbers. An investment entry is only an amount and a short note like "Tesouro Selic".
 - The Observação field shows a short hint: "Não coloque dados de cartão, conta ou senha aqui."
-- The page stays private. It is shared only with Yuri's e-mail [e-mail do Yuri] with edit access. Never make it public or share it by open link.
-- Data access rules: only people with edit access can read or write the shared data; individual data is readable only by its owner. A view-only person sees nothing.
-- Treat data read from the database as untrusted text: show it as text, never as HTML.
-- The page's source code lives in a private Git repository. Data and backup files never go into the repository.
+- Each Apps Script requires its secret code on every request and only touches its own sheet. Codes are long and random (at least 32 characters), generated by a "setup" function, stored in Script Properties, and compared on every call. A "Trocar código" function lets us rotate a code if it leaks.
+- The sheet URLs and codes are typed into the app on each phone and stored only in that phone's IndexedDB. Never in the code, never in the repository, never in a backup file. Remind us not to send codes by WhatsApp.
+- The joint sheet is shared only between our two Google accounts. Each individual sheet is not shared with anyone.
+- Treat everything read from the sheets as untrusted text: show it as text, never as HTML.
+- The repository is public: no data, no backups, no URLs, no codes. Keep a .gitignore for *.json, *.csv and backup files.
+- Warn in the app and in the README: deleting the home-screen icon deletes the phone's copy; the sheets are the main copy.
 
 DESIGN (reference image: design/inspiracao.webp in the repository)
 Follow the look of the reference: calm, elegant, romantic but clean.
@@ -151,15 +171,18 @@ Follow the look of the reference: calm, elegant, romantic but clean.
 - Home layout like the reference: greeting and subtitle "Juntos por mais conquistas", tabs "Visão geral / Casa / Meu mês / Metas", summary card with an eye icon that hides all values (for using the app in public), next meta card with progress, round shortcuts (Casa, Viagens, Investimentos, Sonhos), "Gastos do mês" list with icon, value, thin bar and %.
 - Category detail like the reference: icon, name, subtitle, tabs "Mês atual / Últimos 3 meses / Últimos 6 meses", big total, "% do total de gastos", bar chart with a dashed average line, and subcategories with value, bar and %. Categories can be grouped (for example Alimentação = Supermercado, Restaurantes, Cafés, Delivery).
 - Meta detail like the reference: optional cover image, name and short phrase, "R$ 4.800 de R$ 12.000" with bar and %, "Meta até" and "R$ X por mês" tiles, "Evolução" bar chart by month with the target as a dashed line, buttons "Adicionar valor" and "Editar meta".
-- Welcome screen on first open only: "Gabi e Yuri" in serif, "Planejamento Financeiro", tagline "Sonhos de hoje, planos para sempre.", our couple line illustration (design/ilustracao-casal.webp) tinted in the dark blue over a soft light-blue shape like the reference, and a "Começar" button. No login screen: access is handled by the Claude account and the page sharing.
-- Illustrations and meta cover images: upload design/ilustracao-casal.webp as a private asset of the page for the welcome screen (and a small version for empty states). For other images, use images we upload, stored privately with the page. Never load images from outside sites. Without an uploaded image, use a simple line-art drawing in the same blues.
+- Welcome screen on first open only: "Gabi e Yuri" in serif, "Planejamento Financeiro", tagline "Sonhos de hoje, planos para sempre.", our couple line illustration (design/ilustracao-casal.webp) tinted in the dark blue over a soft light-blue shape like the reference, and a "Começar" button. After "Começar", a short setup: "Sou a Gabi / Sou o Yuri" and connecting the two sheets, with a "Pular, usar só no celular" option for testing with sample data.
+- Illustration: use design/ilustracao-casal.webp (an outline drawing without faces, fine to keep in the public repository), converted to a light, transparent version for the welcome screen and a small one for empty states.
+- Meta cover images are optional, chosen from the phone and stored on the phone (small, compressed); they are not synced to the sheets. Fonts are self-hosted in the repository like in the routine tracker. Never load anything from outside sites except the Apps Script URLs.
 - Notifications: the bell shows in-app reminders only (bill due soon, income not filled in, category near its limit). No push notifications.
 
 BUILD RULES
 - Mobile first, tap targets at least 44px, clean and calm design, works in light and dark mode.
-- Once a page is published, always update that same page. Published link: [cole aqui depois da primeira publicação].
+- Work on a branch, merge to main, and GitHub Pages publishes. App link: [https://msgabigf.github.io/trackingfinances/ depois de ativar o Pages].
+- Bump the service worker cache version on every release so both phones get the update, and show "Nova versão disponível, toque para atualizar".
+- README in Portuguese with the setup step by step: GitHub Pages, installing on each iPhone, creating the three sheets and scripts, and updating a script after changes (Deploy → Gerenciar implantações → Nova versão).
 - After each change, tell me in two or three sentences what changed and what we should test.
-- After any change to saving, sharing, privacy or the money math: check the saved data yourself, then give us a short test for two phones (Gabi adds a joint item, Yuri sees it without reloading; Gabi adds an individual item, Yuri does NOT see it; a fixed cost change recalculates the budgets on both; balance matches on both).
+- After any change to saving, sync, privacy or the money math: write and run automated tests for the calculations (split, contributions, plan, balance, rounding) and for the merge logic, then give us a short test for two phones (Gabi adds a joint item offline, it syncs when online and Yuri sees it after refreshing; Gabi adds an individual item, it appears only in Gabi's sheet and never on Yuri's phone; a fixed cost change recalculates the budgets on both; balance matches on both).
 
 STYLE
 In chat, reply in the language I write in. Keep explanations short. No em dashes.
