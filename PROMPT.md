@@ -1,4 +1,4 @@
-# Prompt do app (versão 13)
+# Prompt do app (versão 14)
 
 Preencha o que está entre [colchetes] antes de usar. Cole este texto nas instruções do projeto no Claude, para que toda conversa nova já comece com ele.
 
@@ -106,9 +106,14 @@ FREELAS (make savings grow faster than silly spending)
 - The joint part is a voluntary contribution: it never creates a debt between us. On the individual side only the amounts go to the joint sheet, never the freela details.
 - The Guardar part never becomes spendable budget.
 
+MÊS E CARTÃO
+- The budget month is the calendar month (day 1 to the last day).
+- Spending counts in the budget on the day of the purchase, including credit card purchases. Installments: the 1st in the purchase month, then one per month.
+- "Dinheiro para as faturas": because card purchases leave the budget before the money leaves the bank, each "Crédito" nickname can have a closing day and a due day, and the app shows how much each open bill already has ("Fatura Crédito Gabi, vence 10/11: R$ 1.240"). That is the money that must still be in the bank account. Joint card purchases show there too, so whoever pays the bill knows the total.
+
 PARCELADOS (installments commit future months)
 - Quick-add has "Parcelado?" for credit purchases: total value (or value per installment) and number of installments (2 to 24). The app shows "Isso compromete R$ 300 por mês até mar/2027" before saving.
-- A parceled purchase is one record with its installments. Each installment counts in the month its bill is paid. Each "Crédito" nickname can have a closing day and due day; a purchase after the closing day starts in the following bill. Without them, the first installment falls in the next month.
+- A parceled purchase is one record with its installments. The 1st installment counts in the purchase month and each next one in the following months. For "Dinheiro para as faturas", each installment goes into the bill given by the card's closing day.
 - Future months already show the installments as "Já comprometido" in the plan, subtracted before the Livre, like fixed costs. Plano shows a "Próximos 6 meses" view with how much of each month is already committed (joint and my own).
 - Joint installments are split with the split of the month each installment falls in.
 - Editing or cancelling the purchase updates or removes all future installments (paid ones stay). "Quitar antecipado" moves the remaining installments to the current month.
@@ -221,6 +226,7 @@ Follow the look of the reference: calm, elegant, romantic but clean.
 - Colors: warm off-white background (about #F4F2EE), deep blue-teal for primary buttons, active tabs and headings (about #1F4E63), dusty blue for progress bars and charts (about #7FA7B8), very light blue for icon circles and tracks (about #D6E4EA). Green only for income arrows, soft red only for spending arrows and over-budget. Define all colors as tokens, with a matching dark mode (deep navy background, same blues lightened).
 - Type: an elegant serif for big numbers and titles (for example "Cormorant Garamond" or "Libre Caslon Display" from Google Fonts) and a clean sans for everything else (for example "Inter"). Big values like R$ 8.240,00 in the serif.
 - Shapes: soft cards with large rounded corners and very light shadows, pill-shaped segmented tabs (active = filled dark blue, white text), pill buttons (primary filled, secondary outlined), thin line icons inside light blue circles.
+- App name on the iPhone: "Gabi & Yuri", icon: a thin line heart in the palette blue.
 - Bottom bar: Início, Lançamentos, big round "+" in the center, Metas, Mais.
 - Home layout like the reference: greeting and subtitle "Juntos por mais conquistas", tabs "Visão geral / Casa / Meu mês / Metas", summary card with an eye icon that hides all values (for using the app in public), next meta card with progress, round shortcuts (Casa, Viagens, Investimentos, Sonhos), "Gastos do mês" list with icon, value, thin bar and %.
 - Category detail like the reference: icon, name, subtitle, tabs "Mês atual / Últimos 3 meses / Últimos 6 meses", big total, "% do total de gastos", bar chart with a dashed average line, and subcategories with value, bar and %. Categories can be grouped (for example Alimentação = Supermercado, Restaurantes, Cafés, Delivery).
@@ -231,6 +237,7 @@ Follow the look of the reference: calm, elegant, romantic but clean.
 - Notifications: the bell shows in-app reminders only (bill due soon, income not filled in, category near its limit). No push notifications.
 
 BUILD RULES
+- Build in 3 stages: (1) the full app on the phone with all calculations and sample data, installable and testable, no sync yet; (2) Google Sheets sync with the Apps Scripts; (3) iPhone Shortcuts, Conferir and the setup guide.
 - Mobile first, tap targets at least 44px, clean and calm design, works in light and dark mode.
 - Work on a branch, merge to main, and GitHub Pages publishes. App link: [https://msgabigf.github.io/trackingfinances/ depois de ativar o Pages].
 - Bump the service worker cache version on every release so both phones get the update, and show "Nova versão disponível, toque para atualizar".
