@@ -1,4 +1,4 @@
-# Prompt do app (versão 11)
+# Prompt do app (versão 12)
 
 Preencha o que está entre [colchetes] antes de usar. Cole este texto nas instruções do projeto no Claude, para que toda conversa nova já comece com ele.
 
@@ -96,7 +96,7 @@ Joint plan (visible to both), in this order of priority:
 Individual plan (private, one per person):
 1. Own Renda base minus own contribution to the house.
 2. Minus own fixed costs, own investments and own meta contributions. The result is "Meu livre".
-3. Meu livre is divided by that person's own percentages across their individual variable categories (for example Salão, Roupas, Lazer pessoal, Imprevistos, Reserva).
+3. Meu livre is divided by that person's own percentages across their individual variable categories (for example Salão, Roupas, Lazer pessoal, Reserva).
 4. The "curtir" part of freelas (see FREELAS) is added on top of Meu livre as "Extra do freela".
 
 FREELAS (make savings grow faster than silly spending)
@@ -115,15 +115,22 @@ PARCELADOS (installments commit future months)
 - Warn when committed installments pass [20]% of the Livre of any upcoming month.
 - Centavos: the first installment absorbs rounding so the installments add up exactly to the total.
 
-IMPREVISTOS (emergencies like farmácia, conserto, veterinário)
-- Categories can be marked "imprevisto" (for example Farmácia, Saúde urgente, Conserto, Veterinário). Every plan (joint and individual) has an "Imprevistos" budget.
-- An imprevisto always counts. It first uses the Imprevistos budget. If it goes over, the app asks right after saving "De onde tirar R$ X?" with a ready suggestion: take from the categories marked "extra" first (Delivery, Lazer, Restaurantes...), proportionally to what is still left in each, never from Mercado or fixed costs. Then from Reserva. We can accept, adjust the amounts, or choose another category.
-- Each move is recorded as a "Remanejamento" (from, to, amount, month, reason) and shown on the category: "Lazer: R$ 400 − R$ 120 remanejado para Farmácia". Remanejamentos only affect that month.
+IMPREVISTOS (always joint: in a relationship, emergencies are shared)
+- Every imprevisto is joint, no matter who it is for: medicine and pharmacy for either of us, doctor, car repair, home repair, vet. It is split by DIVISÃO and whoever paid gets credit in the balance, like any joint item.
+- Health and pharmacy are essentials, never "extras", and never count against us in Guardado x Extras.
+- The joint plan has an "Imprevistos" budget. An imprevisto always counts and first uses that budget.
+- If it goes over, the app asks right after saving "De onde tirar R$ X?" with a ready suggestion: take from the joint categories marked "extra" first (Delivery, Lazer, Restaurantes...), proportionally to what is still left in each, never from Mercado, fixed costs or Saúde. Then from Reserva. We can accept, adjust the amounts, or choose another category.
+- Each move is recorded as a "Remanejamento" (from, to, amount, month, reason) and shown on the category: "Lazer: R$ 400, R$ 120 remanejado para Farmácia". Remanejamentos only affect that month.
 - If the extras and Reserva are not enough, show clearly how much the month will close negative, so we can decide together.
-- Imprevistos count as spending, not as extras, in Guardado x Extras. Planejado x Real suggests a bigger Imprevistos budget if it keeps running out.
+- The Observação is optional: no need to write what the medicine or treatment was.
+- Planejado x Real suggests a bigger Imprevistos budget if it keeps running out.
+
+CARRO (shared)
+- The car is used by both, so all car costs are joint: Combustível and Estacionamento (variable), Seguro, IPVA, Licenciamento, Parcela do carro if any (fixed or parceled), Manutenção and Conserto (imprevisto).
+- IPVA, seguro and licenciamento are yearly: the app can spread them as a monthly "provisão" in the plan, so the month they are due is not a shock.
 
 GUARDADO X EXTRAS (the main health indicator)
-- Categories can be marked "extra" (non-essential), for example Delivery, Restaurantes, Lazer, Compras por impulso, Roupas. Essentials like Mercado, contas and Saúde are not extras.
+- Categories can be marked "extra" (non-essential), for example Delivery, Restaurantes, Lazer, Compras por impulso, Roupas. Essentials like Mercado, contas, Saúde, Farmácia, car costs and every imprevisto are never extras.
 - Every month the app compares "Guardado" (investments plus meta contributions) with "Extras" (spending in extra categories).
 - Joint version on Casa (joint savings x joint extras); private version on Meu mês (my savings x my extras).
 - Show it as two bars plus a trend over the last 6 months. Green when Guardado is bigger than Extras, with a small celebration message; a gentle notice when Extras pass Guardado, naming the category that grew most.
@@ -143,7 +150,7 @@ Plan settings:
 - Renda base, Valor da casa, expected fixed costs, percentages and the freela rule are stored per month. Changing them applies from the current month forward; past months keep their plan.
 
 CATEGORIES
-- Joint fixed: Condomínio, Aluguel, Luz, Gás, Água, Internet, Outros fixos. Joint variable: Mercado, Delivery, Restaurantes, Lazer, Transporte, Casa, Farmácia (imprevisto), Imprevistos, Reserva.
+- Joint fixed: Condomínio, Aluguel, Luz, Gás, Água, Internet, Outros fixos. Joint variable: Mercado, Delivery, Restaurantes, Lazer, Casa, Combustível, Estacionamento, Transporte (app, ônibus), Imprevistos, Reserva. Joint imprevisto categories: Farmácia, Saúde, Conserto do carro, Conserto da casa, Veterinário. Joint car fixed: Seguro, IPVA, Licenciamento.
 - Each person manages their own individual categories (for example Academia and Celular as fixed; Salão, Roupas, Lazer pessoal, Reserva as variable).
 - Every category has a stable internal id. Renaming never breaks old entries. A category with entries can be archived but not deleted.
 
