@@ -1,6 +1,6 @@
 // Offline: the whole app is cached on install and served from the cache.
 // Bump VERSION on every deploy so both phones pick up the new files.
-const VERSION = 'gy-v1.0.0';
+const VERSION = 'gy-v1.0.1';
 const FILES = [
   './',
   'index.html',
@@ -12,6 +12,8 @@ const FILES = [
   'assets/fonts/cormorant-garamond-latin-wght-normal.woff2',
   'assets/fonts/inter-latin-wght-normal.woff2',
   'assets/art/casal.png', 'assets/art/casal-mini.png',
+  'assets/art/sketch/casa.png', 'assets/art/sketch/aviao.png', 'assets/art/sketch/mapa.png', 'assets/art/sketch/cartao.png',
+  'assets/art/sketch/lampada.png', 'assets/art/sketch/hamburguer.png', 'assets/art/sketch/grafico.png',
   'assets/icons/apple-touch-icon.png', 'assets/icons/favicon.png',
   'assets/icons/icon-192.png', 'assets/icons/icon-512.png', 'assets/icons/icon-maskable-512.png',
 ];

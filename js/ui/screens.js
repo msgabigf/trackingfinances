@@ -858,6 +858,13 @@ export function pagtoForm(ctx, editing = null) {
 
 // ================================================================ Welcome / setup
 
+// sketch icons around the couple: [file, left %, top %, width %, rotation]
+const SKETCH = [
+  ['casa', 3, 0, 17, -6], ['aviao', 27, 3, 34, -3], ['mapa', 76, 1, 20, 7],
+  ['hamburguer', 4, 22, 13, 4], ['lampada', 69, 15, 12, 6], ['cartao', 81, 25, 16, -9],
+  ['grafico', 3, 40, 12, -3],
+];
+
 export function welcome(ctx) {
   const step = ctx.state.setup || 'intro';
   if (step === 'intro') {
@@ -866,8 +873,11 @@ export function welcome(ctx) {
       html: `<div class="welcome" style="margin:calc(-1 * (env(safe-area-inset-top) + 14px)) -16px 0">
         ${icon('heart', 'heart')}
         <h1>Gabi e Yuri<em>Planejamento Financeiro</em></h1>
-        <div class="tag-line">Sonhos de hoje,<br>planos para sempre.</div>
-        <div class="art"><div class="blob"></div><img class="art-img" src="assets/art/casal.png" alt="Ilustração do casal" width="654" height="900"></div>
+        <div class="art">
+          ${SKETCH.map(([n, x, y, w, r]) => `<img class="sketch art-img" src="assets/art/sketch/${n}.png" alt="" style="left:${x}%;top:${y}%;width:${w}%;transform:rotate(${r}deg)">`).join('')}
+          <div class="blob"></div>
+          <img class="casal art-img" src="assets/art/casal.png" alt="Ilustração do casal" width="654" height="900">
+        </div>
         <div class="actions"><button class="btn" data-act="setup" data-v="quem">Começar ${icon('right')}</button></div>
       </div>`,
     };
